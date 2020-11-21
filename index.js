@@ -1,8 +1,20 @@
-const { response } = require("express");
 const express = require("express");
 const app = express();
+const morgan = require("morgan");
 
 app.use(express.json());
+
+// Token to also log the request body
+morgan.token("body", function getId(req) {
+  if (req.body) {
+    return JSON.stringify(req.body);
+  }
+  return "";
+});
+
+app.use(
+  morgan(" :method :url :status :res[content-length] - :response-time ms :body")
+);
 
 let persons = [
   {
@@ -27,10 +39,12 @@ let persons = [
   },
 ];
 
+// ID Generator helper function
 const doesExist = (id) => {
   return persons.find((person) => person.id === id);
 };
 
+// Random ID Generator
 const generateId = () => {
   let newId = Math.floor(Math.random() * (12000 - 0) + 0);
 
@@ -68,6 +82,7 @@ app.get("/api/persons/:id", (request, response) => {
   }
 });
 
+// Adds a person and returns the new person object (in JSON format)
 app.post("/api/persons", (request, response) => {
   const body = request.body;
 
