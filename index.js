@@ -8,6 +8,7 @@ app.use(cors());
 app.use(
   morgan(" :method :url :status :res[content-length] - :response-time ms :body")
 );
+app.use(express.static("build"));
 
 // Token to also log the request body
 morgan.token("body", function getId(req) {
